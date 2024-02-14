@@ -1,5 +1,4 @@
 import yfinance as yahooFinance
-from yfinance import shared
 
 
 def get_stock_info(ticker: str):
