@@ -1,13 +1,26 @@
 import yfinance as yahooFinance
+from yfinance import shared
 
 
 def get_stock_info(ticker: str):
-    if isinstance(ticker, str):
+    """Retrieves stock info for inputted stock ticker
+
+    Args:
+        ticker (str): stock ticker
+
+    Raises:
+        TypeError: ticker is not a string
+        ConnectionError: ticker was not a valid stock ticker
+
+    Returns:
+        yahooFinance.Ticker: information object about the ticker
+    """
+    if not isinstance(ticker, str):
         raise TypeError()
 
-    try:
-        stock_information = yahooFinance.Ticker(ticker)
-    except Exception as e:
-        raise ConnectionError("Failed to retrieve stock data") from e
+    stock_information = yahooFinance.Ticker(ticker)
+
+    if stock_information.history(period="max").empty:
+        raise ConnectionError("Invalid Ticker")
 
     return stock_information
