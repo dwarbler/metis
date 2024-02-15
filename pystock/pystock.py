@@ -1,25 +1,18 @@
-import yfinance as yahooFinance
+import datetime as dt
+import pandas as pd
+from pandas_datareader import data as pdr
 
 
-def get_stock_info(ticker: str):
-    """Retrieves stock info for inputted stock ticker
-
-    Args:
-        ticker (str): stock ticker
-
-    Raises:
-        TypeError: ticker is not a string
-        ConnectionError: ticker was not a valid stock ticker
-
-    Returns:
-        yahooFinance.Ticker: information object about the ticker
-    """
-    if not isinstance(ticker, str):
+def fetch_stock_data(ticker: str, length: int) -> pd.DataFrame:
+    if not isinstance(ticker, str) or not isinstance(length, int) or length < 1:
         raise TypeError()
 
-    stock_information = yahooFinance.Ticker(ticker)
+    end = dt.datetime.now()
+    start = end - dt.timedelta(days=length)
 
-    if stock_information.history(period="max").empty:
-        raise ConnectionError("Invalid Ticker")
+    try:
+        df = pdr.get_data_yahoo(ticker, start, end)
+    except Exception as e:
+        raise ConnectionError("Invalid Ticker") from e
 
-    return stock_information
+    return df
