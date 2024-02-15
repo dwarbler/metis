@@ -69,7 +69,7 @@ def calculate_black_scholes_sigma(dataframe: pd.DataFrame) -> float:
 
 def black_scholes_predict_next(
     price: float, interest: float, sigma: float, timedelta: float, epsilon: float = 0
-):
+) -> float:
     """predicts the next stock price based on the black-scholes algorithm
 
     Args:
@@ -100,7 +100,9 @@ def black_scholes_predict_next(
     )
 
 
-def simulate_stock_price(price: float, interest: float, sigma: float, num_days: int):
+def simulate_stock_price(
+    price: float, interest: float, sigma: float, num_days: int
+) -> np.ndarray:
     """simulate stock prices for a certain number of days
 
     Args:
@@ -113,7 +115,7 @@ def simulate_stock_price(price: float, interest: float, sigma: float, num_days: 
         TypeError: _description_
 
     Returns:
-        np.array: array of predicted stock prices
+        np.darray: array of predicted stock prices
     """
     if (
         not isinstance(price, float)
@@ -136,3 +138,29 @@ def simulate_stock_price(price: float, interest: float, sigma: float, num_days: 
     )
 
     return np.array(predicted_prices)
+
+
+def simulate_stock_improved(price: float, interest: float, sigma: float, num_days: int) -> np.ndarray:
+    """simulate stock price prediction for a number of days 1000 times
+
+    Args:
+        price (float): current stock price
+        interest (float): stock interest
+        sigma (float): black-scholes sigma value
+        num_days (int): number of days to simulate
+
+    Raises:
+        TypeError: invalid type passed to function
+
+    Returns:
+        np.ndarray: 1000 stock price simulations
+    """
+    if (
+        not isinstance(price, float)
+        or not isinstance(interest, float)
+        or not isinstance(sigma, float)
+        or not isinstance(num_days, int)
+    ):
+        raise TypeError
+
+    return np.array([simulate_stock_price(price, interest, sigma, num_days)]).T
