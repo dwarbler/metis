@@ -36,7 +36,7 @@ def fetch_stock_data(ticker: str, length: int) -> pd.DataFrame:
     return df
 
 
-def calculate_sigma(dataframe: pd.DataFrame) -> float:
+def calculate_black_scholes_sigma(dataframe: pd.DataFrame) -> float:
     """calculate the sigma value for the black-scholes equation
 
     Args:
