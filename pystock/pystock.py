@@ -98,3 +98,41 @@ def black_scholes_predict_next(
     return price * np.exp(
         (interest - (sigma**2) / 2) * timedelta + sigma * np.sqrt(timedelta) * epsilon
     )
+
+
+def simulate_stock_price(price: float, interest: float, sigma: float, num_days: int):
+    """simulate stock prices for a certain number of days
+
+    Args:
+        price (float): current stock price
+        interest (float): stock interest rate
+        sigma (float): black-scholes sigma value
+        num_days (int): number of days to simulate
+
+    Raises:
+        TypeError: _description_
+
+    Returns:
+        np.array: array of predicted stock prices
+    """
+    if (
+        not isinstance(price, float)
+        or not isinstance(interest, float)
+        or not isinstance(sigma, float)
+        or not isinstance(num_days, int)
+    ):
+        raise TypeError
+
+    timedelta = 1 / num_days
+    predicted_prices = [price]
+
+    predicted_prices.extend(
+        predicted_prices.append(
+            black_scholes_predict_next(
+                predicted_prices[idx], interest, sigma, timedelta
+            )
+        )
+        for idx in range(num_days - 1)
+    )
+
+    return np.array(predicted_prices)
