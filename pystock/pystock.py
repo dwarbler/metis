@@ -1,5 +1,6 @@
 import datetime as dt
 import pandas as pd
+import numpy as np
 import math
 from scipy.optimize import fsolve
 import yfinance as yahooFinance
@@ -45,6 +46,9 @@ def calculate_black_scholes_sigma(dataframe: pd.DataFrame) -> float:
     Returns:
         float: sigma value calculated from black-scholes equation
     """
+    if dataframe is not pd.DataFrame:
+        raise TypeError
+
     dataframe["Mean"] = (dataframe["High"] + dataframe["Low"]) / 2
     mean = dataframe["Mean"].mean()
     variance = dataframe["Mean"].var()
@@ -61,3 +65,36 @@ def calculate_black_scholes_sigma(dataframe: pd.DataFrame) -> float:
     sigma = fsolve(generate_black_scholes_system_of_equations, [0.1])
 
     return sigma
+
+
+def black_scholes_predict_next(
+    price: float, interest: float, sigma: float, timedelta: float, epsilon: float = 0
+):
+    """predicts the next stock price based on the black-scholes algorithm
+
+    Args:
+        price (float): current price of stock
+        interest (float): interest rate of stock
+        sigma (float): black-scholes sigma value
+        timedelta (float): amount of time passed for this prediction
+        epsilon (float, optional): value for testing. Defaults to 0.
+
+    Raises:
+        TypeError: incorrect input type input
+
+    Returns:
+        float: predicted stock price after timedelta
+    """
+    if (
+        not isinstance(price, float)
+        or not isinstance(interest, float)
+        or not isinstance(sigma, float)
+        or not isinstance(timedelta, float)
+    ):
+        raise TypeError
+
+    if epsilon == 0:
+        epsilon = np.random.normal()
+    return price * np.exp(
+        (interest - (sigma**2) / 2) * timedelta + sigma * np.sqrt(timedelta) * epsilon
+    )
