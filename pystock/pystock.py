@@ -5,6 +5,7 @@ import math
 from scipy.optimize import fsolve
 import yfinance as yahooFinance
 from pandas_datareader import data as pdr
+import matplotlib.pyplot as plt
 
 
 def fetch_stock_data(ticker: str, length: int) -> pd.DataFrame:
@@ -34,6 +35,8 @@ def fetch_stock_data(ticker: str, length: int) -> pd.DataFrame:
     if df.empty:
         raise ConnectionError("Invalid Ticker")
 
+    df["Average"] = (df["High"] + df["Low"]) / 2
+
     return df
 
 
@@ -46,7 +49,7 @@ def calculate_black_scholes_sigma(dataframe: pd.DataFrame) -> float:
     Returns:
         float: sigma value calculated from black-scholes equation
     """
-    if dataframe is not pd.DataFrame:
+    if not isinstance(dataframe, pd.DataFrame):
         raise TypeError
 
     dataframe["Mean"] = (dataframe["High"] + dataframe["Low"]) / 2
@@ -64,7 +67,7 @@ def calculate_black_scholes_sigma(dataframe: pd.DataFrame) -> float:
 
     sigma = fsolve(generate_black_scholes_system_of_equations, [0.1])
 
-    return sigma
+    return sigma[0]
 
 
 def black_scholes_predict_next(
@@ -129,18 +132,16 @@ def simulate_stock_price(
     predicted_prices = [price]
 
     predicted_prices.extend(
-        predicted_prices.append(
-            black_scholes_predict_next(
-                predicted_prices[idx], interest, sigma, timedelta
-            )
-        )
+        black_scholes_predict_next(predicted_prices[idx], interest, sigma, timedelta)
         for idx in range(num_days - 1)
     )
 
     return np.array(predicted_prices)
 
 
-def simulate_stock_improved(price: float, interest: float, sigma: float, num_days: int) -> np.ndarray:
+def simulate_stock_improved(
+    price: float, interest: float, sigma: float, num_days: int
+) -> np.ndarray:
     """simulate stock price prediction for a number of days 1000 times
 
     Args:
@@ -163,4 +164,36 @@ def simulate_stock_improved(price: float, interest: float, sigma: float, num_day
     ):
         raise TypeError
 
-    return np.array([simulate_stock_price(price, interest, sigma, num_days)]).T
+    return np.array(
+        [simulate_stock_price(price, interest, sigma, num_days) for _ in range(1000)]
+    ).T
+
+
+def run_program():
+    ticker = input("Stock Ticker: ").strip()
+    num_days_stock = int(input("Number of Days to Gather Data: ").strip())
+    dataframe = fetch_stock_data(ticker, num_days_stock)
+
+    stock_price = dataframe["Average"].astype(float).tail(1)[0]
+    interest = 0.05
+    sigma = calculate_black_scholes_sigma(dataframe)
+    num_days_simulate = int(input("Number of Days to simulate: ").strip())
+    simulated_prices = simulate_stock_improved(
+        stock_price, interest, sigma, num_days_simulate
+    )
+
+    plt.plot(simulated_prices)
+    plt.show()
+
+    simulated_stocks = [
+        simulated_prices[i, :].mean() for i in range(len(simulated_prices))
+    ]
+
+    stock_list = dataframe["Average"].to_list()
+    stock_list.extend(simulated_stocks)
+    print(np.arange(-1 * len(dataframe["Average"]), num_days_simulate + 1, 1))
+    plt.plot(
+        np.arange(-1 * len(dataframe["Average"]) + 1, num_days_simulate + 1, 1),
+        stock_list,
+    )
+    plt.show()

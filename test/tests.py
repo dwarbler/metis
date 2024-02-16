@@ -3,6 +3,7 @@ import numpy as np
 from pystock.pystock import fetch_stock_data
 from pystock.pystock import calculate_black_scholes_sigma
 from pystock.pystock import black_scholes_predict_next
+from pystock.pystock import run_program
 
 
 class TestStockInfo(unittest.TestCase):
@@ -23,3 +24,6 @@ class TestStockInfo(unittest.TestCase):
         self.assertEqual(
             np.exp(1 - 1 / 2 + 1), black_scholes_predict_next(1.0, 1.0, 1.0, 1.0, 1.0)
         )
+
+    def test_running_program(self):
+        self.assertRaises(ConnectionError, run_program)
