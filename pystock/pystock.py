@@ -1,17 +1,17 @@
 import datetime as dt
-import pandas as pd
-import numpy as np
 import math
-from scipy.optimize import fsolve
+
+import matplotlib.pyplot as plt
+import numpy as np
+import pandas as pd
 import yfinance as yahooFinance
 from pandas_datareader import data as pdr
-import matplotlib.pyplot as plt
+from scipy.optimize import fsolve
 
 
 def fetch_stock_data(ticker: str, length: int) -> pd.DataFrame:
     """fetches pandas dataframe of stock prices for a given ticker
 
-    Args:
         ticker (str): stock ticker
         length (int): number of days of data to fetch
 

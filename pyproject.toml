@@ -1,0 +1,31 @@
+[project]
+name = "pystock"
+version = "0.1.0"
+description = "A small implementation of Black-Scholes for stock analysis"
+authors = [
+    { name = "DerekW3", email = "92753567+DerekW3@users.noreply.github.com" },
+]
+dependencies = [
+    "numpy>=1.26.4",
+    "matplotlib>=3.8.4",
+    "pandas>=2.2.2",
+    "yfinance>=0.2.38",
+    "scipy>=1.13.0",
+    "pandas_datareader>=0.10.0",
+]
+readme = "README.md"
+requires-python = ">= 3.12"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.rye]
+managed = true
+dev-dependencies = []
+
+[tool.hatch.metadata]
+allow-direct-references = true
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/pystock"]
