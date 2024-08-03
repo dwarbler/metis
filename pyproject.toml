@@ -29,3 +29,7 @@ allow-direct-references = true
 
 [tool.hatch.build.targets.wheel]
 packages = ["src/pystock"]
+
+[tool.pyright]
+venvPath = "."
+venv = ".venv"
