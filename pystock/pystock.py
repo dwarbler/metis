@@ -4,7 +4,7 @@ import math
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
-import yfinance as yahooFinance
+import yfinance as yahooFinance # type: ignore
 from pandas_datareader import data as pdr
 from scipy.optimize import fsolve
 
@@ -24,7 +24,6 @@ def fetch_stock_data(ticker: str, length: int) -> pd.DataFrame:
     """
     if not isinstance(ticker, str) or not isinstance(length, int) or length < 2:
         raise TypeError()
-
     end = dt.datetime.now()
     start = end - dt.timedelta(days=length)
 
